@@ -2,36 +2,46 @@ import React, { Component } from 'react';
 import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 
-function Login() {
+function LoginView() {
     return(
       <form className="container">
           <TextField label="Email" margin="normal" id="correo"></TextField>
           <TextField label="Password" margin="normal" id="clave"></TextField>
-          <Button variant="outlined"  type="submit" value="Log in" onClick={post()} >Login</Button>
+          <Button variant="outlined"  type="submit" value="Log in" onClick={Login()} >Login</Button>
       </form>
     )
 }
 
-  function post(){
-      const Http = new XMLHttpRequest();
-      const url='http://localhost:8080/v1/auth';
-      const data = {
-          correo: document.getElementById("correo"),
-          clave : document.getElementById("clave")
+export default function Login() {
+
+  const classes = useStyles();
+
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const history = useHistory();
+
+  const logIn = (e) => {
+      e.preventDefault();
+      if (userName === ""){
+          alert("Enter your username");
+      } else{
+          getUserByUserName(userName)
+              .then( resp => {
+                  if (resp === null) alert("Oops, user not found");
+                  if (resp.password === password){
+                      localStorage.setItem("loggingStaus", "logged");
+                      localStorage.setItem("username", userName);
+                      localStorage.setItem("userpassword", password);
+                      localStorage.setItem("token", response.token);
+                      setToken(response.token);
+                      // Once the user have been authenticated the app will navigate to the landing page
+                      history.push("/TaskGrid");
+                  }else alert("Oops, incorrect password");
+              }).catch( () => alert("Oops, Something went wrong. Try again!!"));
       }
-
-      console.log(data.correo); 
-      console.log(data.clave); 
-      
-      Http.open("POST", url );
-      Http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      Http.send(JSON.stringify(data));
-
-      Http.onreadystatechange = (e) => {
-      console.log(Http.getAllResponseHeaders)
   }
       
  
 
     }
-    export default Login;
+    export default LoginView;
